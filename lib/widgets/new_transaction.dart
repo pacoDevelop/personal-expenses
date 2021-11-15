@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:universal_platform/universal_platform.dart';
 
 class NewTransaction extends StatefulWidget {
   final Function addTx;
@@ -97,17 +99,24 @@ class _NewTransactionState extends State<NewTransaction> {
                       ),
                     ),
                     Expanded(
-                      child: TextButton(
-                        style: TextButton.styleFrom(
-                          // backgroundColor: Theme.of(context).primaryColor,
-                          primary: Theme.of(context).primaryColorDark,
-                          padding: const EdgeInsets.all(10),
-                          textStyle:
-                              const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        child: const Text("Seleccione la fecha"),
-                        onPressed: _presentDatePicker,
-                      ),
+                      child: UniversalPlatform.isIOS
+                          ? CupertinoButton(
+                              child: const Text("Seleccione la fecha",
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)),
+                              onPressed: _presentDatePicker,
+                            )
+                          : TextButton(
+                              style: TextButton.styleFrom(
+                                // backgroundColor: Theme.of(context).primaryColor,
+                                primary: Theme.of(context).primaryColorDark,
+                                padding: const EdgeInsets.all(10),
+                                textStyle: const TextStyle(
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              child: const Text("Seleccione la fecha"),
+                              onPressed: _presentDatePicker,
+                            ),
                     ),
                   ],
                 ),
