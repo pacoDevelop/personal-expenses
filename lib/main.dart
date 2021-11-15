@@ -179,27 +179,30 @@ class _MyHomePageState extends State<MyHomePage> {
             height,
         child: Chart(_recentTransactions));
 
-    final pageBody = Column(
-      // mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        if (isLandscape)
-          Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-            const Text("Mirar gráfico"),
-            Switch.adaptive(
-                activeColor: Theme.of(context).colorScheme.secondary,
-                value: _showChart,
-                onChanged: (state) {
-                  setState(() {
-                    _showChart = state;
-                  });
-                })
-          ]),
-        if (!isLandscape) txChartBarWidget(0.3),
-        if (!isLandscape) txListWidget,
-        if (isLandscape) _showChart ? txChartBarWidget(0.7) : txListWidget,
-      ],
-    );
+    final pageBody = SafeArea(
+        child: SingleChildScrollView(
+      child: Column(
+        // mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          if (isLandscape)
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+              const Text("Mirar gráfico"),
+              Switch.adaptive(
+                  activeColor: Theme.of(context).colorScheme.secondary,
+                  value: _showChart,
+                  onChanged: (state) {
+                    setState(() {
+                      _showChart = state;
+                    });
+                  })
+            ]),
+          if (!isLandscape) txChartBarWidget(0.3),
+          if (!isLandscape) txListWidget,
+          if (isLandscape) _showChart ? txChartBarWidget(0.7) : txListWidget,
+        ],
+      ),
+    ));
     return UniversalPlatform.isIOS
         ? CupertinoPageScaffold(
             child: pageBody,
