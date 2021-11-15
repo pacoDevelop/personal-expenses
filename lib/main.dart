@@ -148,13 +148,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
     final PreferredSizeWidget appBar = UniversalPlatform.isIOS
         ? CupertinoNavigationBar(
-            middle: Text(title),
-            trailing: Row(children: <Widget>[
-              IconButton(
-                icon: const Icon(Icons.add),
-                onPressed: () => _startAddNewTransaction(context),
-              ),
-            ]),
+            middle: const Text(title),
+            trailing: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  GestureDetector(
+                      child: Icon(CupertinoIcons.add),
+                      onTap: () => _startAddNewTransaction(context)),
+                ]),
           )
         : AppBar(
             title: const Text(title),
