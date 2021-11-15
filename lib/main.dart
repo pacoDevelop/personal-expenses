@@ -187,7 +187,8 @@ class _MyHomePageState extends State<MyHomePage> {
         children: <Widget>[
           if (isLandscape)
             Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-              const Text("Mirar gráfico"),
+              Text("Mirar gráfico",
+                  style: Theme.of(context).textTheme.headline6),
               Switch.adaptive(
                   activeColor: Theme.of(context).colorScheme.secondary,
                   value: _showChart,
