@@ -138,15 +138,8 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
-    var isLandscape = !(UniversalPlatform.isDesktop || UniversalPlatform.isWeb);
-    if (isLandscape) {
-      isLandscape = mediaQuery.orientation == Orientation.landscape;
-    }
-
-    final PreferredSizeWidget appBar = UniversalPlatform.isIOS
+  PreferredSizeWidget _buildAppBar() {
+    return UniversalPlatform.isIOS
         ? CupertinoNavigationBar(
             middle: const Text(title),
             trailing: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
@@ -164,54 +157,90 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ],
           ) as PreferredSizeWidget;
+  }
 
-    final txListWidget = SizedBox(
-        height: (mediaQuery.size.height -
-                appBar.preferredSize.height -
-                mediaQuery.padding.top) *
-            0.7,
-        child: TransactionList(_userTransactions, _deleteTransaction));
+  SizedBox _txChartBarWidget(
+    double height,
+    MediaQueryData mediaQuery,
+    AppBar appBar,
+  ) =>
+      SizedBox(
+          height: (mediaQuery.size.height -
+                  appBar.preferredSize.height -
+                  mediaQuery.padding.top) *
+              height,
+          child: Chart(_recentTransactions));
 
-    SizedBox txChartBarWidget(double height) => SizedBox(
-        height: (mediaQuery.size.height -
-                appBar.preferredSize.height -
-                mediaQuery.padding.top) *
-            height,
-        child: Chart(_recentTransactions));
+  SizedBox _txListWidget(
+    MediaQueryData mediaQuery,
+    AppBar appBar,
+  ) =>
+      SizedBox(
+          height: (mediaQuery.size.height -
+                  appBar.preferredSize.height -
+                  mediaQuery.padding.top) *
+              0.7,
+          child: TransactionList(_userTransactions, _deleteTransaction));
 
-    List<Widget> buildPortraitContent() {
-      return [txChartBarWidget(0.3), txListWidget];
+  List<Widget> _buildPortraitContent(
+    MediaQueryData mediaQuery,
+    AppBar appBar,
+  ) {
+    return [
+      _txChartBarWidget(0.3, mediaQuery, appBar),
+      _txListWidget(mediaQuery, appBar)
+    ];
+  }
+
+  SizedBox _buildChangeChartBarOrTxList(
+    bool showChart,
+    MediaQueryData mediaQuery,
+    AppBar appBar,
+  ) {
+    return showChart
+        ? _txChartBarWidget(0.7, mediaQuery, appBar)
+        : _txListWidget(mediaQuery, appBar);
+  }
+
+  List<Widget> _buildLandscapeContent(
+    bool showChart,
+    MediaQueryData mediaQuery,
+    AppBar appBar,
+  ) {
+    return [
+      Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+        Text("Mirar gráfico", style: Theme.of(context).textTheme.headline6),
+        Switch.adaptive(
+            activeColor: Theme.of(context).colorScheme.secondary,
+            value: _showChart,
+            onChanged: (state) {
+              setState(() {
+                _showChart = state;
+              });
+            })
+      ]),
+      _buildChangeChartBarOrTxList(showChart, mediaQuery, appBar)
+    ];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    final PreferredSizeWidget appBar = _buildAppBar();
+    var isLandscape = !(UniversalPlatform.isDesktop || UniversalPlatform.isWeb);
+    if (isLandscape) {
+      isLandscape = mediaQuery.orientation == Orientation.landscape;
     }
-
-    SizedBox buildChangeChartBarOrTxList() {
-      return _showChart ? txChartBarWidget(0.7) : txListWidget;
-    }
-
-    List<Widget> buildLandscapeContent() {
-      return [
-        Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-          Text("Mirar gráfico", style: Theme.of(context).textTheme.headline6),
-          Switch.adaptive(
-              activeColor: Theme.of(context).colorScheme.secondary,
-              value: _showChart,
-              onChanged: (state) {
-                setState(() {
-                  _showChart = state;
-                });
-              })
-        ]),
-        buildChangeChartBarOrTxList()
-      ];
-    }
-
     final pageBody = SafeArea(
         child: SingleChildScrollView(
       child: Column(
         // mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          if (isLandscape) ...buildLandscapeContent(),
-          if (!isLandscape) ...buildPortraitContent(),
+          if (isLandscape)
+            ..._buildLandscapeContent(_showChart, mediaQuery, appBar as AppBar),
+          if (!isLandscape)
+            ..._buildPortraitContent(mediaQuery, appBar as AppBar),
         ],
       ),
     ));
