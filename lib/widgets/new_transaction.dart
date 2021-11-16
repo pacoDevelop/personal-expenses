@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:guide_flutter/widgets/adaptative_flat_button.dart';
 import 'package:intl/intl.dart';
-import 'package:universal_platform/universal_platform.dart';
 
 class NewTransaction extends StatefulWidget {
   final Function addTx;
@@ -21,7 +21,7 @@ class _NewTransactionState extends State<NewTransaction> {
     final enteredTitle = _titleController.text;
     final enteredAmount = double.parse(_amountController.text);
 
-    if (enteredTitle.isEmpty || enteredAmount <= 0 || _selectedDate == null) {
+    if (enteredTitle.isEmpty || enteredAmount <= 0) {
       return;
     }
 
@@ -91,32 +91,14 @@ class _NewTransactionState extends State<NewTransaction> {
                             borderRadius: BorderRadius.circular(10),
                             color: Theme.of(context).primaryColorLight),
                         child: Text(
-                          _selectedDate == null
-                              ? "No hay fecha seleccionada"
-                              : DateFormat('dd/MM/yyyy').format(_selectedDate),
+                          DateFormat('dd/MM/yyyy').format(_selectedDate),
                           style: const TextStyle(fontSize: 19),
                         ),
                       ),
                     ),
                     Expanded(
-                      child: UniversalPlatform.isIOS
-                          ? CupertinoButton(
-                              child: const Text("Seleccione la fecha",
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
-                              onPressed: _presentDatePicker,
-                            )
-                          : TextButton(
-                              style: TextButton.styleFrom(
-                                // backgroundColor: Theme.of(context).primaryColor,
-                                primary: Theme.of(context).primaryColorDark,
-                                padding: const EdgeInsets.all(10),
-                                textStyle: const TextStyle(
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              child: const Text("Seleccione la fecha"),
-                              onPressed: _presentDatePicker,
-                            ),
+                      child: AdaptativeFlatButton(
+                          "Seleccione la fecha", _presentDatePicker),
                     ),
                   ],
                 ),

@@ -151,7 +151,7 @@ class _MyHomePageState extends State<MyHomePage> {
             middle: const Text(title),
             trailing: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
               GestureDetector(
-                  child: Icon(CupertinoIcons.add),
+                  child: const Icon(CupertinoIcons.add),
                   onTap: () => _startAddNewTransaction(context)),
             ]),
           )
@@ -179,28 +179,39 @@ class _MyHomePageState extends State<MyHomePage> {
             height,
         child: Chart(_recentTransactions));
 
+    List<Widget> buildPortraitContent() {
+      return [txChartBarWidget(0.3), txListWidget];
+    }
+
+    SizedBox buildChangeChartBarOrTxList() {
+      return _showChart ? txChartBarWidget(0.7) : txListWidget;
+    }
+
+    List<Widget> buildLandscapeContent() {
+      return [
+        Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+          Text("Mirar gráfico", style: Theme.of(context).textTheme.headline6),
+          Switch.adaptive(
+              activeColor: Theme.of(context).colorScheme.secondary,
+              value: _showChart,
+              onChanged: (state) {
+                setState(() {
+                  _showChart = state;
+                });
+              })
+        ]),
+        buildChangeChartBarOrTxList()
+      ];
+    }
+
     final pageBody = SafeArea(
         child: SingleChildScrollView(
       child: Column(
         // mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          if (isLandscape)
-            Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-              Text("Mirar gráfico",
-                  style: Theme.of(context).textTheme.headline6),
-              Switch.adaptive(
-                  activeColor: Theme.of(context).colorScheme.secondary,
-                  value: _showChart,
-                  onChanged: (state) {
-                    setState(() {
-                      _showChart = state;
-                    });
-                  })
-            ]),
-          if (!isLandscape) txChartBarWidget(0.3),
-          if (!isLandscape) txListWidget,
-          if (isLandscape) _showChart ? txChartBarWidget(0.7) : txListWidget,
+          if (isLandscape) ...buildLandscapeContent(),
+          if (!isLandscape) ...buildPortraitContent(),
         ],
       ),
     ));
