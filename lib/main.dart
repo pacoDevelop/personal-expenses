@@ -202,16 +202,13 @@ class _MyHomePageState extends State<MyHomePage> {
         : _txListWidget(mediaQuery, appBar);
   }
 
-  List<Widget> _buildLandscapeContent(
-    bool showChart,
-    MediaQueryData mediaQuery,
-    AppBar appBar,
-  ) {
+  List<Widget> _buildLandscapeContent(bool showChart, MediaQueryData mediaQuery,
+      AppBar appBar, ThemeData theme) {
     return [
       Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-        Text("Mirar gráfico", style: Theme.of(context).textTheme.headline6),
+        Text("Mirar gráfico", style: theme.textTheme.headline6),
         Switch.adaptive(
-            activeColor: Theme.of(context).colorScheme.secondary,
+            activeColor: theme.colorScheme.secondary,
             value: _showChart,
             onChanged: (state) {
               setState(() {
@@ -227,6 +224,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     final PreferredSizeWidget appBar = _buildAppBar();
+    final theme = Theme.of(context);
     var isLandscape = !(UniversalPlatform.isDesktop || UniversalPlatform.isWeb);
     if (isLandscape) {
       isLandscape = mediaQuery.orientation == Orientation.landscape;
@@ -238,7 +236,8 @@ class _MyHomePageState extends State<MyHomePage> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           if (isLandscape)
-            ..._buildLandscapeContent(_showChart, mediaQuery, appBar as AppBar),
+            ..._buildLandscapeContent(
+                _showChart, mediaQuery, appBar as AppBar, theme),
           if (!isLandscape)
             ..._buildPortraitContent(mediaQuery, appBar as AppBar),
         ],

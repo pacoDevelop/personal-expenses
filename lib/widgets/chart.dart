@@ -40,7 +40,7 @@ class Chart extends StatelessWidget {
             (previousValue + (element['amount'] as double)));
   }
 
-  double spending(e) {
+  double _spending(e) {
     double result = (e['amount'] as double) / totalSpending;
     return result;
   }
@@ -62,7 +62,7 @@ class Chart extends StatelessWidget {
                         label: e["day"].toString(),
                         spendingAmount: (e['amount'] as double),
                         spendingPcOfTotal:
-                            totalSpending == 0.0 ? 0 : spending(e))),
+                            totalSpending == 0.0 ? 0 : _spending(e))),
               )
               .toList(),
         ),
